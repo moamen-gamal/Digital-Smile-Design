@@ -16,7 +16,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication,QFileDialog,QMessageBox
 from PyQt5.QtGui import QPixmap
 import sys
 from PIL.ImageQt import ImageQt
-from process import MidlineDrawing, colorationDetection, gumDetection, template, ApplyColoration
+from process import MidlineDrawing, colorationDetection, gab_Detection, gumDetection, template, ApplyColoration
 
 class Ui_MainWindow(QMainWindow):
     def setupUi(self, MainWindow):
@@ -156,28 +156,28 @@ class Ui_MainWindow(QMainWindow):
 
         self.tempid=self.TemplateBox.value()
         if(self.tempid ==1):
-                tempfname ='temp1.png'
+                tempfname ='temps\\temp1.png'
                 self.imgtemp =template(self.fname[0],tempfname)
         elif(self.tempid ==2):
-                tempfname ='temp2.png'
+                tempfname ='temps\\temp2.png'
                 self.imgtemp =template(self.fname[0],tempfname)
         elif(self.tempid ==3):
-                tempfname ='temp3.png'
+                tempfname ='temps\\temp3.png'
                 self.imgtemp =template(self.fname[0],tempfname)
         elif(self.tempid ==4):
-                tempfname ='temp4.png'
+                tempfname ='temps\\temp4.png'
                 self.imgtemp =template(self.fname[0],tempfname)
         elif(self.tempid ==5):
-                tempfname ='lines1.png'
+                tempfname ='temps\\lines1.png'
                 self.imgtemp =template(self.fname[0],tempfname)
         elif(self.tempid ==6):
-                tempfname ='lines2.png'
+                tempfname ='temps\\lines2.png'
                 self.imgtemp =template(self.fname[0],tempfname)
         elif(self.tempid ==7):
-                tempfname ='lines3.png'
+                tempfname ='temps\\lines3.png'
                 self.imgtemp =template(self.fname[0],tempfname)
         elif(self.tempid ==8):
-                tempfname ='lines4.png'   
+                tempfname ='temps\\lines4.png'   
                 self.imgtemp =template(self.fname[0],tempfname)
 
         self.qimage = ImageQt(self.imgtemp)
@@ -200,7 +200,7 @@ class Ui_MainWindow(QMainWindow):
         self.pixmap = QPixmap.fromImage(self.qimage)
         # Add Pic to label
         self.label.setPixmap(self.pixmap) 
-        
+
     def Tests(self):
         gummyid = gumDetection(self.fname[0])
         if (gummyid ==0):
@@ -213,9 +213,14 @@ class Ui_MainWindow(QMainWindow):
                 colorationStr = "coloration Result : "+"Discoloration Found \n"
         else:
                 colorationStr = "coloration Result : "+"NO Discoloration Found \n"
-                
+        gabid=gab_Detection(self.fname[0])
+        if gabid ==1:
+                gabstr ="gab Result : gabs found\n"
+        else:
+                gabstr ="gab Result : NO gabs found\n"
+             
         testsStr += colorationStr
-        print(testsStr)
+        testsStr += gabstr
         msgBox = QMessageBox()
         msgBox.setIcon(QMessageBox.Information)
         msgBox.setText(testsStr)

@@ -238,7 +238,10 @@ def gumDetection(fname):
     
     cv2.imwrite('dst.jpg',dst)
     img_blur = cv2.GaussianBlur(imgE, (5,5), 0)
-    edges = cv2.Canny(image=img_blur, threshold1=10, threshold2=120)
+    mean, std = cv2.meanStdDev(croped)
+    TH1 =int(mean[0]-std[0])
+    TH2 = int(mean[0]+std[0])
+    edges = cv2.Canny(image=img_blur, threshold1=TH1, threshold2=TH2)
     cv2.imwrite("edges.jpg",edges)
     Xstorer =[]
     capOpener221  = Image.open(r"edges.jpg")
@@ -262,7 +265,8 @@ def gumDetection(fname):
             AverageArr.append(Final22)
 
     Averagenumber=sum(AverageArr)/len(AverageArr)
-    if(Averagenumber<10):
+    print(Averagenumber)
+    if(Averagenumber>7.7 and Averagenumber<8.2):
         return 0
     else:
         return 1
@@ -298,6 +302,20 @@ def MidlineDrawing(fname):
     img2 = Image.open(fname)
     draw = ImageDraw.Draw(img2) 
     draw.line((ptss[0][0],ptss[0][1],ptss[1][0],ptss[1][1]), fill=128)
+    cropids =[78,13,308,14]
+    croppts=[]
+    for i in range(0,len(cropids)):
+        croppts.append([xid[cropids[i]],yid[cropids[i]]])
+    left = croppts[0][1]
+    right = croppts[2][1]
+    top = croppts[1][0]
+    bottom = croppts[3][0]
+    croppedimg = img[top:bottom,right:left]
+    cv2.imshow("cropped",croppedimg)
+    img_blur = cv2.GaussianBlur(croppedimg, (5,5), 0)
+    edges = cv2.Canny(image=img_blur, threshold1=10, threshold2=120)
+    cv2.imwrite('edges.jpg',edges)
+    cv2.waitKey(0)
 
     return img2
 
@@ -326,3 +344,89 @@ def colorationDetection(fname):
     Definer=Classify_Number/((width21*height21)-ZeroNumver)
 
     return Definer
+
+
+def gab_Detection(fname):
+    img = cv2.imread(fname)
+    mpDraw = mp.solutions.drawing_utils
+    mpFaceMesh = mp.solutions.face_mesh
+    faceMesh = mpFaceMesh.FaceMesh(max_num_faces=2)
+
+    xid =[]
+    yid =[]
+    pts = np.empty([1,1])
+    pts.fill(0)
+    ptss =[]
+    i =0
+    #13 mid upper lip
+    ids = [82,13,312,317,14,87]
+    
+    imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    results = faceMesh.process(imgRGB)
+    if results.multi_face_landmarks:
+        for faceLms in results.multi_face_landmarks:
+            for id,lm in enumerate(faceLms.landmark):
+                
+                ih, iw, ic = img.shape
+                x,y = int(lm.x*iw), int(lm.y*ih)
+                xid.append(x)
+                yid.append(y)
+                
+    for i in range(0,len(ids)):
+        ptss.append([xid[ids[i]],yid[ids[i]]])
+    ptsss = np.array(ptss)
+    
+    ## (1) Crop the bounding rect
+    rect = cv2.boundingRect(ptsss)
+    x,y,w,h = rect
+    croped = img[y:y+h, x:x+w].copy()
+
+    ## (2) make mask
+    ptsss = ptsss - ptsss.min(axis=0)
+
+    mask = np.zeros(croped.shape[:2], np.uint8)
+    cv2.drawContours(mask, [ptsss], -1, (255, 255, 255), -1, cv2.LINE_AA)
+
+    ## (3) do bit-op
+    dst = cv2.bitwise_and(croped, croped, mask=mask)
+    mean, std = cv2.meanStdDev(dst)
+
+    image = dst
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Set threshold level
+    threshold_level = mean[0] - std[0]
+
+    # Find coordinates of all pixels below threshold
+    coords = np.column_stack(np.where(gray < threshold_level))
+    #print(coords)
+
+    # Create mask of all pixels lower than threshold level
+    mask = gray < threshold_level
+
+    # Color the pixels in the mask
+    image[mask] = (204, 119, 0)
+    black =0
+    for i in range(0,image.shape[0]):
+        for j in range(0,image.shape[1]):
+            if image[i][j][0] == 204 and image[i][j][1] == 119 and image[i][j][2] == 0  :
+                black =black + 1
+
+    pixTotal =image.shape[0]* image.shape[1]
+
+    if(black/ pixTotal > 0.05):
+        return 1
+    else:
+        return  0   
+   
+
+def findNearestWhite(edges, horizontal, vertical):
+    nonzero = np.argwhere(edges == 255)  # white & vertical
+    Hline = nonzero[nonzero[:, 1] == horizontal]  # lay on the horizontal line y=const
+    #print( Hline)
+    distances = np.array(abs(Hline[:, 0] - vertical))  # nearest point to the line
+    #print(distances)
+    
+    nearest_index = np.argmin(distances)
+    
+    return Hline[nearest_index]
