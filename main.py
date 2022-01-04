@@ -20,6 +20,8 @@ from PyQt5.QtWidgets import QFileDialog
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 
+K=0
+TheTeethTemplateGlobal =QtWidgets.QGraphicsPixmapItem
 
 class Ui_MainWindow(QMainWindow):
     def setupUi(self, MainWindow):
@@ -31,14 +33,6 @@ class Ui_MainWindow(QMainWindow):
         self.centralwidget.setObjectName("centralwidget")
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName("gridLayout")
-        self.ColorationBox = QtWidgets.QSpinBox(self.centralwidget)
-        self.ColorationBox.setMinimum(1)
-        self.ColorationBox.setMaximum(4)
-        self.ColorationBox.setObjectName("ColorationBox")
-        self.gridLayout.addWidget(self.ColorationBox, 3, 0, 1, 1)
-        self.colorationButton = QtWidgets.QPushButton(self.centralwidget)
-        self.colorationButton.setObjectName("colorationButton")
-        self.gridLayout.addWidget(self.colorationButton, 4, 0, 1, 1)
         self.horizontalGroupBox = QtWidgets.QGroupBox(self.centralwidget)
         self.horizontalGroupBox.setMaximumSize(QtCore.QSize(16777215, 100))
         self.horizontalGroupBox.setStyleSheet("border-color: rgb(0, 0, 0);")
@@ -60,6 +54,21 @@ class Ui_MainWindow(QMainWindow):
 "color: rgb(0, 0, 0);")
         self.open_file.setObjectName("open_file")
         self.horizontalLayout.addWidget(self.open_file)
+        self.TestsButton = QtWidgets.QPushButton(self.horizontalGroupBox)
+        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.TestsButton.sizePolicy().hasHeightForWidth())
+        self.TestsButton.setSizePolicy(sizePolicy)
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.TestsButton.setFont(font)
+        self.TestsButton.setStyleSheet("\n"
+"background-color: rgb(0, 85, 0);\n"
+"background-color: rgb(0, 0, 255);\n"
+"color: rgb(0, 0, 0);")
+        self.TestsButton.setObjectName("TestsButton")
+        self.horizontalLayout.addWidget(self.TestsButton)
         self.midline = QtWidgets.QPushButton(self.horizontalGroupBox)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
@@ -76,22 +85,29 @@ class Ui_MainWindow(QMainWindow):
 "")
         self.midline.setObjectName("midline")
         self.horizontalLayout.addWidget(self.midline)
-        self.TestsButton = QtWidgets.QPushButton(self.horizontalGroupBox)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.TestsButton.sizePolicy().hasHeightForWidth())
-        self.TestsButton.setSizePolicy(sizePolicy)
-        font = QtGui.QFont()
-        font.setPointSize(16)
-        self.TestsButton.setFont(font)
-        self.TestsButton.setStyleSheet("\n"
-"background-color: rgb(0, 85, 0);\n"
-"background-color: rgb(0, 0, 255);\n"
-"color: rgb(0, 0, 0);")
-        self.TestsButton.setObjectName("TestsButton")
-        self.horizontalLayout.addWidget(self.TestsButton)
         self.gridLayout.addWidget(self.horizontalGroupBox, 2, 0, 1, 1)
+        self.TemplateBox = QtWidgets.QSpinBox(self.centralwidget)
+        self.TemplateBox.setMinimum(1)
+        self.TemplateBox.setMaximum(8)
+        self.TemplateBox.setObjectName("TemplateBox")
+        self.gridLayout.addWidget(self.TemplateBox, 10, 0, 1, 1)
+        self.colorationButton = QtWidgets.QPushButton(self.centralwidget)
+        self.colorationButton.setObjectName("colorationButton")
+        self.gridLayout.addWidget(self.colorationButton, 9, 0, 1, 1)
+        self.ColorationBox = QtWidgets.QSpinBox(self.centralwidget)
+        self.ColorationBox.setMinimum(1)
+        self.ColorationBox.setMaximum(4)
+        self.ColorationBox.setObjectName("ColorationBox")
+        self.gridLayout.addWidget(self.ColorationBox, 8, 0, 1, 1)
+        self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_3.setObjectName("horizontalLayout_3")
+        self.increase_size = QtWidgets.QPushButton(self.centralwidget)
+        self.increase_size.setObjectName("increase_size")
+        self.horizontalLayout_3.addWidget(self.increase_size)
+        self.Decrease_size = QtWidgets.QPushButton(self.centralwidget)
+        self.Decrease_size.setObjectName("Decrease_size")
+        self.horizontalLayout_3.addWidget(self.Decrease_size)
+        self.gridLayout.addLayout(self.horizontalLayout_3, 3, 0, 1, 1)
         self.verticalLayout_2 = QtWidgets.QVBoxLayout()
         self.verticalLayout_2.setObjectName("verticalLayout_2")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -104,14 +120,9 @@ class Ui_MainWindow(QMainWindow):
         self.horizontalLayout_2.addWidget(self.graphicsView)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.gridLayout.addLayout(self.verticalLayout_2, 0, 0, 1, 1)
-        self.TemplateBox = QtWidgets.QSpinBox(self.centralwidget)
-        self.TemplateBox.setMinimum(1)
-        self.TemplateBox.setMaximum(8)
-        self.TemplateBox.setObjectName("TemplateBox")
-        self.gridLayout.addWidget(self.TemplateBox, 5, 0, 1, 1)
         self.TemplateButton = QtWidgets.QPushButton(self.centralwidget)
         self.TemplateButton.setObjectName("TemplateButton")
-        self.gridLayout.addWidget(self.TemplateButton, 6, 0, 1, 1)
+        self.gridLayout.addWidget(self.TemplateButton, 11, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 842, 25))
@@ -129,6 +140,8 @@ class Ui_MainWindow(QMainWindow):
         self.open_file.clicked.connect(self.open_image)
         self.TemplateButton.clicked.connect(self.add_template)
         self.colorationButton.clicked.connect(self.add_coloration)
+        self.increase_size.clicked.connect(self.IncreaserOfTemplate)
+        self.Decrease_size.clicked.connect(self.DecreaseOfTemplate)
         self.TestsButton.clicked.connect(self.Tests)
         self.midline.clicked.connect(self.MidlineDraw)
         self.retranslateUi(MainWindow)
@@ -137,15 +150,17 @@ class Ui_MainWindow(QMainWindow):
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.colorationButton.setText(_translate("MainWindow", "apply coloration"))
         self.open_file.setText(_translate("MainWindow", "Open File"))
-        self.midline.setText(_translate("MainWindow", "Mid Line"))
         self.TestsButton.setText(_translate("MainWindow", "Tests"))
+        self.midline.setText(_translate("MainWindow", "Mid Line"))
+        self.colorationButton.setText(_translate("MainWindow", "apply coloration"))
+        self.increase_size.setText(_translate("MainWindow", "Template Size Increase"))
+        self.Decrease_size.setText(_translate("MainWindow", "Template size Decrease"))
         self.TemplateButton.setText(_translate("MainWindow", "apply Template"))
         self.actionopen.setText(_translate("MainWindow", "open"))
         self.actioncoloration.setText(_translate("MainWindow", "coloration"))
         self.actionMid_Line.setText(_translate("MainWindow", "Mid Line"))
-    
+
     def open_image(self):
                 
         self.fname = QFileDialog.getOpenFileName(self, "Open File", "c:\\gui\\images", "All Files (*);;PNG Files (*.png);;Jpg Files (*.jpg)" )
@@ -200,7 +215,8 @@ class Ui_MainWindow(QMainWindow):
         self.temppixmap=self.temppixmap.scaled(QtCore.QSize(size[0],size[1]),Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.item = QtWidgets.QGraphicsPixmapItem(self.imgpixmap)
         self.tempitem =QtWidgets.QGraphicsPixmapItem(self.temppixmap)
-        
+        global TheTeethTemplateGlobal
+        TheTeethTemplateGlobal=self.tempitem
         self.scene = QtWidgets.QGraphicsScene(self)
         self.scene.clear()
         self.scene.addItem(self.item)
@@ -263,7 +279,114 @@ class Ui_MainWindow(QMainWindow):
         self.scene.clear()
         self.scene.addItem(self.item)
         self.graphicsView.setScene(self.scene)
+    
+    def IncreaserOfTemplate(self):
+        self.tempid=self.TemplateBox.value()
+        tempfname =""
+        size =[]
+        if(self.tempid ==1):
+                tempfname ='temps\\temp1.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==2):
+                tempfname ='temps\\temp2.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==3):
+                tempfname ='temps\\temp3.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==4):
+                tempfname='temps\\temp4.png'
+                self.imgtemp,size  =template(self.fname[0],tempfname)
+        elif(self.tempid ==5):
+                tempfname ='temps\\lines1.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==6):
+                tempfname ='temps\\lines2.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==7):
+                tempfname='temps\\lines3.png'
+                self.imgtemp,size  =template(self.fname[0],tempfname)
+        elif(self.tempid ==8):
+                tempfname ='temps\\lines4.png'   
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        print (size)
+        self.img = Image.open(self.fname[0])
+        self.imgqimage = ImageQt(self.img)
+        self.imgpixmap = QPixmap.fromImage(self.imgqimage)
 
+        self.tempimg = Image.open(tempfname)
+        self.tempqimg =ImageQt(self.tempimg)
+        self.temppixmap =QPixmap.fromImage(self.tempqimg)
+
+        global K
+        K=K+20
+        
+
+        self.temppixmap=self.temppixmap.scaled(QtCore.QSize(size[0]+K,size[1]+K),Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.item = QtWidgets.QGraphicsPixmapItem(self.imgpixmap)
+        x=self.item.pos()
+        # self.item.setPos(x)
+        print("TheXis",x)
+        self.tempitem =QtWidgets.QGraphicsPixmapItem(self.temppixmap)
+        self.tempitem.setPos(TheTeethTemplateGlobal.pos())
+        self.scene = QtWidgets.QGraphicsScene(self)
+        self.scene.clear()
+        self.scene.addItem(self.item)
+        self.scene.addItem(self.tempitem)
+        self.tempitem.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
+        self.graphicsView.setScene(self.scene)
+    def DecreaseOfTemplate(self):
+        self.tempid=self.TemplateBox.value()
+        tempfname =""
+        size =[]
+        if(self.tempid ==1):
+                tempfname ='temps\\temp1.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==2):
+                tempfname ='temps\\temp2.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==3):
+                tempfname ='temps\\temp3.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==4):
+                tempfname='temps\\temp4.png'
+                self.imgtemp,size  =template(self.fname[0],tempfname)
+        elif(self.tempid ==5):
+                tempfname ='temps\\lines1.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==6):
+                tempfname ='temps\\lines2.png'
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        elif(self.tempid ==7):
+                tempfname='temps\\lines3.png'
+                self.imgtemp,size  =template(self.fname[0],tempfname)
+        elif(self.tempid ==8):
+                tempfname ='temps\\lines4.png'   
+                self.imgtemp,size =template(self.fname[0],tempfname)
+        print (size)
+        self.img = Image.open(self.fname[0])
+        self.imgqimage = ImageQt(self.img)
+        self.imgpixmap = QPixmap.fromImage(self.imgqimage)
+
+        self.tempimg = Image.open(tempfname)
+        self.tempqimg =ImageQt(self.tempimg)
+        self.temppixmap =QPixmap.fromImage(self.tempqimg)
+        # COUNT=0
+        # size[0]=size[0]+40*(COUNT+1)
+        # size[1]=size[1]+40*(COUNT+1)
+        
+        global K
+        K=K-20
+
+        self.temppixmap=self.temppixmap.scaled(QtCore.QSize(size[0]+K,size[1]+K),Qt.KeepAspectRatio, Qt.SmoothTransformation)
+        self.item = QtWidgets.QGraphicsPixmapItem(self.imgpixmap)
+        self.tempitem =QtWidgets.QGraphicsPixmapItem(self.temppixmap)
+        self.tempitem.setPos(TheTeethTemplateGlobal.pos())
+        self.scene = QtWidgets.QGraphicsScene(self)
+        self.scene.clear()
+        self.scene.addItem(self.item)
+        self.scene.addItem(self.tempitem)
+        self.tempitem.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
+        self.graphicsView.setScene(self.scene)
 
 if __name__ =="__main__":
     app = QApplication(sys.argv)

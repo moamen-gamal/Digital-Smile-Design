@@ -355,8 +355,8 @@ def MidlineDrawing(fname):
  
     center = Hline[0]
     draw = ImageDraw.Draw(img2)
-    #draw.line((),fill=(0,0,255))
-    draw.line((ptss[2][0]+1.5*center,0, ptss[2][0]+1.5*center,600), fill=(0,255,0))
+    wid,heig = image.size
+    draw.line((ptss[2][0]+1.5*center,0, ptss[2][0]+1.5*center,100*height21), fill=(0,255,0))
     return img2
              
 
