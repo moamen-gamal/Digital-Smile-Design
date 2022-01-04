@@ -7,6 +7,7 @@ import os, io
 from PIL import Image, ImageDraw
 import cv2
 import numpy as np
+from numpy.core.fromnumeric import shape, size
 
 global Zefer
 Zefer = 0
@@ -61,7 +62,7 @@ def template(fname,tempfilename):
     face.paste(resizedTeeth, (ptss[0]), mask = resizedTeeth)
     face.save('./faceTemp.png')
     img = Image.open(r'faceTemp.png')
-    return img
+    return img,rectangle.size
 
 
 def ApplyColoration(fname,rangesid):
@@ -119,9 +120,19 @@ def ApplyColoration(fname,rangesid):
     bg = np.ones_like(croped, np.uint8)*255
     cv2.bitwise_not(bg,bg, mask=mask)
     imgE = dst
-    
+    sensitivity = 90
+    lower = np.array([8,0,255-sensitivity])
+    upper = np.array([172,sensitivity,255])
+
+
+    # turn image into hsv
+    hsv = cv2.cvtColor(dst, cv2.COLOR_BGR2HSV)
+    # mask that makes any non white black
+    mask = cv2.inRange(hsv, lower, upper)
+    output = cv2.bitwise_and(dst,dst, mask= mask)
+    cv2.imwrite("output.jpg", output)
     cv2.imwrite('dst.jpg',dst)
-    capOpener = Image.open(r"dst.jpg")
+    capOpener = Image.open(r"output.jpg")
     img_blur = cv2.GaussianBlur(imgE, (5,5), 0)
     edges = cv2.Canny(image=img_blur, threshold1=10, threshold2=120)
     cv2.imwrite('edges.jpg',edges)
@@ -146,9 +157,7 @@ def ApplyColoration(fname,rangesid):
                 gsummer+=g
                 bsummer+=b
                 N_points+=1
-    raverage=rsummer/N_points
-    baverages=bsummer/N_points
-    gaverage=gsummer/N_points
+
 
     for x in range(0,width21):
         for y in range (0,height21):
@@ -156,7 +165,7 @@ def ApplyColoration(fname,rangesid):
             #print(current_color)
 
             r,g,b= current_color
-            if(b >= baverages and r >= raverage and g >= gaverage ):
+            if(b > 0 and r > 0 and g > 0  ):
                 bWANTEDArray.append(x)
                 jArray.append(y)
             else:
@@ -221,7 +230,7 @@ def gumDetection(fname):
     rect = cv2.boundingRect(ptsss)
     x,y,w,h = rect
     croped = img[y:y+h, x:x+w].copy()
-
+    cv2.imwrite("cropped.jpg",croped)
     ## (2) make mask
     ptsss = ptsss - ptsss.min(axis=0)
 
@@ -265,7 +274,7 @@ def gumDetection(fname):
             AverageArr.append(Final22)
 
     Averagenumber=sum(AverageArr)/len(AverageArr)
-    print(Averagenumber)
+    #print(Averagenumber)
     if(Averagenumber>7.7 and Averagenumber<8.2):
         return 0
     else:
@@ -284,7 +293,7 @@ def MidlineDrawing(fname):
     ptss =[]
     i =0
     #13 mid upper lip
-    ids = [8,200]
+    ids = [8,200,78,13]
     
     imgRGB = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     results = faceMesh.process(imgRGB)
@@ -302,22 +311,53 @@ def MidlineDrawing(fname):
     img2 = Image.open(fname)
     draw = ImageDraw.Draw(img2) 
     draw.line((ptss[0][0],ptss[0][1],ptss[1][0],ptss[1][1]), fill=128)
-    cropids =[78,13,308,14]
-    croppts=[]
-    for i in range(0,len(cropids)):
-        croppts.append([xid[cropids[i]],yid[cropids[i]]])
-    left = croppts[0][1]
-    right = croppts[2][1]
-    top = croppts[1][0]
-    bottom = croppts[3][0]
-    croppedimg = img[top:bottom,right:left]
-    cv2.imshow("cropped",croppedimg)
-    img_blur = cv2.GaussianBlur(croppedimg, (5,5), 0)
-    edges = cv2.Canny(image=img_blur, threshold1=10, threshold2=120)
-    cv2.imwrite('edges.jpg',edges)
-    cv2.waitKey(0)
 
+    r = gumDetection(fname)
+    ########
+
+    image = Image.open(r"cropped.jpg")
+    width21,height21 = image.size
+    Classify_Number=0
+    ZeroNumver=0
+    Neon=0
+    NeonArray=[]
+    for i in range (1,height21):
+        Neon=0
+        for j in range(1,width21):
+            current_color = image.getpixel((j,i))
+            r,g,b= current_color
+            b = int(b)
+            g = int(g)
+            r = int(r)
+            if(b<=40 and r <40 and g<40):
+                ZeroNumver=ZeroNumver+1
+            if(b>=180 and r>=180 and g>=180 ):
+                Classify_Number=Classify_Number+1
+                Neon=Neon+1
+        NeonArray.append(Neon)
+    for i in range(np.size(NeonArray)):
+        if(NeonArray[i]==max(NeonArray)):
+            Zefer=i
+    ######
+    croppedimg = cv2.imread("cropped.jpg")
+    img_blur = cv2.GaussianBlur(croppedimg, (5,5), 0)
+    mean, std = cv2.meanStdDev(croppedimg)
+    TH1 =int(100)
+    TH2 = int(200)
+    edges2 = cv2.Canny(image=img_blur, threshold1=TH1, threshold2=TH2)
+    Horizontal = Zefer
+    print("horizontal: "+str(Horizontal))
+    Vertical = width21/2
+    cv2.imwrite("edges2.jpg",edges2)
+    
+    Hline = findNearestWhite(edges2, Horizontal, Vertical)
+ 
+    center = Hline[0]
+    draw = ImageDraw.Draw(img2)
+    #draw.line((),fill=(0,0,255))
+    draw.line((ptss[2][0]+center,0, ptss[2][0]+center,600), fill=(0,255,0))
     return img2
+             
 
 def colorationDetection(fname):
     cap = cv2.imread(r"dst.jpg")
@@ -340,6 +380,9 @@ def colorationDetection(fname):
                 Classify_Number=Classify_Number+1
                 Neon=Neon+1
         NeonArray.append(Neon)
+    for i in range(np.size(NeonArray)):
+        if(NeonArray[i]==max(NeonArray)):
+            Zefer=i
 
     Definer=Classify_Number/((width21*height21)-ZeroNumver)
 
@@ -422,11 +465,14 @@ def gab_Detection(fname):
 
 def findNearestWhite(edges, horizontal, vertical):
     nonzero = np.argwhere(edges == 255)  # white & vertical
-    Hline = nonzero[nonzero[:, 1] == horizontal]  # lay on the horizontal line y=const
+    width = vertical * 2
+    print(width)
+    Hline1 = nonzero[nonzero[:, 1] <= width/2]
+    Hline2 = nonzero[Hline1[:, 1] >= width/5]
+    #Hline = np.reshape(Hline1,np.shape(Hline2)) +  Hline2
     #print( Hline)
-    distances = np.array(abs(Hline[:, 0] - vertical))  # nearest point to the line
+    distances = np.array(abs(Hline2[:, 0] - vertical))  # nearest point to the line
     #print(distances)
-    
     nearest_index = np.argmin(distances)
     
-    return Hline[nearest_index]
+    return Hline2[nearest_index]
