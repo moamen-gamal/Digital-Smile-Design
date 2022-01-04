@@ -204,7 +204,7 @@ class Ui_MainWindow(QMainWindow):
         elif(self.tempid ==8):
                 tempfname ='temps\\lines4.png'   
                 self.imgtemp,size =template(self.fname[0],tempfname)
-        print (size)
+
         self.img = Image.open(self.fname[0])
         self.imgqimage = ImageQt(self.img)
         self.imgpixmap = QPixmap.fromImage(self.imgqimage)
@@ -362,7 +362,7 @@ class Ui_MainWindow(QMainWindow):
         elif(self.tempid ==8):
                 tempfname ='temps\\lines4.png'   
                 self.imgtemp,size =template(self.fname[0],tempfname)
-        print (size)
+
         self.img = Image.open(self.fname[0])
         self.imgqimage = ImageQt(self.img)
         self.imgpixmap = QPixmap.fromImage(self.imgqimage)
@@ -370,9 +370,7 @@ class Ui_MainWindow(QMainWindow):
         self.tempimg = Image.open(tempfname)
         self.tempqimg =ImageQt(self.tempimg)
         self.temppixmap =QPixmap.fromImage(self.tempqimg)
-        # COUNT=0
-        # size[0]=size[0]+40*(COUNT+1)
-        # size[1]=size[1]+40*(COUNT+1)
+
         
         global K
         K=K-20
