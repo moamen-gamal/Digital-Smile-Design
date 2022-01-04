@@ -216,7 +216,7 @@ class Ui_MainWindow(QMainWindow):
         self.item = QtWidgets.QGraphicsPixmapItem(self.imgpixmap)
         self.tempitem =QtWidgets.QGraphicsPixmapItem(self.temppixmap)
         global TheTeethTemplateGlobal
-        TheTeethTemplateGlobal=self.tempitem
+        self.TheTeethTemplateGlobal=self.tempitem
         self.scene = QtWidgets.QGraphicsScene(self)
         self.scene.clear()
         self.scene.addItem(self.item)
@@ -325,9 +325,9 @@ class Ui_MainWindow(QMainWindow):
         self.item = QtWidgets.QGraphicsPixmapItem(self.imgpixmap)
         x=self.item.pos()
         # self.item.setPos(x)
-        print("TheXis",x)
+        
         self.tempitem =QtWidgets.QGraphicsPixmapItem(self.temppixmap)
-        self.tempitem.setPos(TheTeethTemplateGlobal.pos())
+        self.tempitem.setPos(self.TheTeethTemplateGlobal.pos())
         self.scene = QtWidgets.QGraphicsScene(self)
         self.scene.clear()
         self.scene.addItem(self.item)
@@ -380,7 +380,7 @@ class Ui_MainWindow(QMainWindow):
         self.temppixmap=self.temppixmap.scaled(QtCore.QSize(size[0]+K,size[1]+K),Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.item = QtWidgets.QGraphicsPixmapItem(self.imgpixmap)
         self.tempitem =QtWidgets.QGraphicsPixmapItem(self.temppixmap)
-        self.tempitem.setPos(TheTeethTemplateGlobal.pos())
+        self.tempitem.setPos(self.TheTeethTemplateGlobal.pos())
         self.scene = QtWidgets.QGraphicsScene(self)
         self.scene.clear()
         self.scene.addItem(self.item)
