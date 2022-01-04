@@ -8,6 +8,7 @@ from PIL import Image, ImageDraw
 import cv2
 import numpy as np
 from numpy.core.fromnumeric import shape, size
+import matplotlib as plt
 
 global Zefer
 Zefer = 0
@@ -355,7 +356,7 @@ def MidlineDrawing(fname):
     center = Hline[0]
     draw = ImageDraw.Draw(img2)
     #draw.line((),fill=(0,0,255))
-    draw.line((ptss[2][0]+center,0, ptss[2][0]+center,600), fill=(0,255,0))
+    draw.line((ptss[2][0]+1.5*center,0, ptss[2][0]+1.5*center,600), fill=(0,255,0))
     return img2
              
 
@@ -464,15 +465,20 @@ def gab_Detection(fname):
    
 
 def findNearestWhite(edges, horizontal, vertical):
-    nonzero = np.argwhere(edges == 255)  # white & vertical
-    width = vertical * 2
-    print(width)
-    Hline1 = nonzero[nonzero[:, 1] <= width/2]
-    Hline2 = nonzero[Hline1[:, 1] >= width/5]
-    #Hline = np.reshape(Hline1,np.shape(Hline2)) +  Hline2
-    #print( Hline)
-    distances = np.array(abs(Hline2[:, 0] - vertical))  # nearest point to the line
-    #print(distances)
+    nonzero = np.argwhere(edges == 255) #white & vertical
+    width = vertical*2 
+    Hline1 =  nonzero[nonzero[:, 1] >= width/5]
+    Hline2 = Hline1[Hline1[:, 1] <= width/2] #lay on the horizontal line y=const
+    print("hline2: ", Hline2)
+    distances = np.array(abs(Hline2[:,0] - vertical) )  # nearest point to the line 
+    print("distances",distances )
     nearest_index = np.argmin(distances)
-    
+    print("nearest_index",distances[nearest_index])
+    if(distances[nearest_index] == 0) :print("medline is perfect")
+    else: print("medline is shifted with ", distances[nearest_index])
+    # plt.imshow(edges)
+    # plt.axvline(x=Hline2[nearest_index][0], ymin=0.05, ymax=0.95, color='green', label='axvline - % of full height')
+
+    # plt.show()
+
     return Hline2[nearest_index]
