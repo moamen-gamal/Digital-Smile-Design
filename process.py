@@ -106,6 +106,11 @@ def ApplyColoration(fname,rangesid):
     ## (1) Crop the bounding rect
     rect = cv2.boundingRect(ptsss)
     x,y,w,h = rect
+    xcap =x
+    ycap =y
+    wcap =w
+    hcap =h
+
     croped = img[y:y+h, x:x+w].copy()
 
     ## (2) make mask
@@ -121,7 +126,7 @@ def ApplyColoration(fname,rangesid):
     bg = np.ones_like(croped, np.uint8)*255
     cv2.bitwise_not(bg,bg, mask=mask)
     imgE = dst
-    sensitivity = 90
+    sensitivity = 150
     lower = np.array([8,0,255-sensitivity])
     upper = np.array([172,sensitivity,255])
 
@@ -179,9 +184,9 @@ def ApplyColoration(fname,rangesid):
 
     
     THEMODIFIED=Image.open(fname)
-    for x in range(xid[78],xid[308]):
-        for y in range (yid[13],yid[14]):
-            current_color = capOpener.getpixel((x-xid[78], y-yid[13]))
+    for x in range(xcap,xcap+ wcap ):
+        for y in range (ycap,ycap+hcap):
+            current_color = capOpener.getpixel((x-xcap, y-ycap))
             #print(current_color)
 
             r, g, b = current_color
@@ -191,7 +196,6 @@ def ApplyColoration(fname,rangesid):
                 THEMODIFIED.putpixel((x, y),current_color)
 
     return THEMODIFIED
-    
     
 def gumDetection(fname):
     img = cv2.imread(fname)
