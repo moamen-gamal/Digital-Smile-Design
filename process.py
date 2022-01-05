@@ -347,7 +347,6 @@ def MidlineDrawing(fname):
     TH2 = int(200)
     edges2 = cv2.Canny(image=img_blur, threshold1=TH1, threshold2=TH2)
     Horizontal = Zefer
-    print("horizontal: "+str(Horizontal))
     Vertical = width21/2
     cv2.imwrite("edges2.jpg",edges2)
     
@@ -469,13 +468,9 @@ def findNearestWhite(edges, horizontal, vertical):
     width = vertical*2 
     Hline1 =  nonzero[nonzero[:, 1] >= width/5]
     Hline2 = Hline1[Hline1[:, 1] <= width/2] #lay on the horizontal line y=const
-    print("hline2: ", Hline2)
+
     distances = np.array(abs(Hline2[:,0] - vertical) )  # nearest point to the line 
-    print("distances",distances )
     nearest_index = np.argmin(distances)
-    print("nearest_index",distances[nearest_index])
-    if(distances[nearest_index] == 0) :print("medline is perfect")
-    else: print("medline is shifted with ", distances[nearest_index])
     # plt.imshow(edges)
     # plt.axvline(x=Hline2[nearest_index][0], ymin=0.05, ymax=0.95, color='green', label='axvline - % of full height')
 

@@ -274,6 +274,7 @@ class Ui_MainWindow(QMainWindow):
         self.qimage = ImageQt(self.midimg)
         self.pixmap = QPixmap.fromImage(self.qimage)
         # Add Pic to label
+        
         self.item = QtWidgets.QGraphicsPixmapItem(self.pixmap)
         self.scene = QtWidgets.QGraphicsScene(self)
         self.scene.clear()
@@ -308,7 +309,6 @@ class Ui_MainWindow(QMainWindow):
         elif(self.tempid ==8):
                 tempfname ='temps\\lines4.png'   
                 self.imgtemp,size =template(self.fname[0],tempfname)
-        print (size)
         self.img = Image.open(self.fname[0])
         self.imgqimage = ImageQt(self.img)
         self.imgpixmap = QPixmap.fromImage(self.imgqimage)
@@ -320,7 +320,7 @@ class Ui_MainWindow(QMainWindow):
         global K
         K=K+20
         
-
+        
         self.temppixmap=self.temppixmap.scaled(QtCore.QSize(size[0]+K,size[1]+K),Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.item = QtWidgets.QGraphicsPixmapItem(self.imgpixmap)
         x=self.item.pos()
@@ -334,7 +334,10 @@ class Ui_MainWindow(QMainWindow):
         self.scene.addItem(self.tempitem)
         self.tempitem.setFlag(QtWidgets.QGraphicsItem.ItemIsMovable)
         self.graphicsView.setScene(self.scene)
+
+
     def DecreaseOfTemplate(self):
+        self.scene.clear()
         self.tempid=self.TemplateBox.value()
         tempfname =""
         size =[]
@@ -374,7 +377,6 @@ class Ui_MainWindow(QMainWindow):
         
         global K
         K=K-20
-
         self.temppixmap=self.temppixmap.scaled(QtCore.QSize(size[0]+K,size[1]+K),Qt.KeepAspectRatio, Qt.SmoothTransformation)
         self.item = QtWidgets.QGraphicsPixmapItem(self.imgpixmap)
         self.tempitem =QtWidgets.QGraphicsPixmapItem(self.temppixmap)
